@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SecureShare — Dashboard</title>
+  <link rel="stylesheet" href="/secure-share-app/frontend/css/style.css" />
+</head>
+<body class="app-page">
+
+  <!-- ===================== SIDEBAR ===================== -->
+  <aside class="sidebar">
+    <div class="sidebar-logo">
+      <div class="logo-icon small">
+        <svg viewBox="0 0 40 40" fill="none"><rect x="8" y="16" width="24" height="18" rx="3" fill="#3b82f6"/><path d="M13 16V12a7 7 0 0 1 14 0v4" stroke="#60a5fa" stroke-width="2.5" stroke-linecap="round"/><circle cx="20" cy="25" r="3" fill="white"/><line x1="20" y1="28" x2="20" y2="31" stroke="white" stroke-width="2" stroke-linecap="round"/></svg>
+      </div>
+      <span>SecureShare</span>
+    </div>
+
+    <nav class="sidebar-nav">
+      <a href="#" class="nav-item active" data-section="myFiles">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg>
+        Mes fichiers
+      </a>
+      <a href="#" class="nav-item" data-section="sharedWithMe">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+        Partagés avec moi
+      </a>
+      <a href="#" class="nav-item" data-section="upload">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+        Envoyer un fichier
+      </a>
+    </nav>
+
+    <div class="sidebar-footer">
+      <div class="user-badge">
+        <div class="user-avatar" id="userAvatar"></div>
+        <span id="sidebarUsername"></span>
+      </div>
+      <button class="logout-btn" id="logoutBtn" title="Se déconnecter">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+      </button>
+    </div>
+  </aside>
+
+  <!-- ===================== MAIN ===================== -->
+  <main class="main-content">
+
+    <!-- Header -->
+    <header class="top-bar">
+      <div class="page-title" id="pageTitle">Mes fichiers</div>
+      <div class="header-actions">
+        <button class="btn-icon" id="loadPrivateKeyBtn" title="Charger ma clé privée">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 2l-2 2m-7.61 7.61a5.5 5.5 0 1 1-7.778 7.778 5.5 5.5 0 0 1 7.777-7.777zm0 0L15.5 7.5m0 0l3 3L22 7l-3-3m-3.5 3.5L19 4"/></svg>
+          Clé privée
+        </button>
+        <div class="key-status" id="keyStatus">
+          <span class="dot red"></span> Clé non chargée
+        </div>
+      </div>
+    </header>
+
+    <!-- ========== SECTION: My Files ========== -->
+    <section id="sectionMyFiles" class="section active">
+      <div class="section-header">
+        <h2>Mes fichiers</h2>
+        <button class="btn-small" id="refreshFilesBtn">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-.05-2.12"/></svg>
+          Actualiser
+        </button>
+      </div>
+
+      <div id="myFilesGrid" class="files-grid">
+        <div class="loading-state">
+          <div class="spinner"></div>
+          <span>Chargement…</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- ========== SECTION: Shared with me ========== -->
+    <section id="sectionSharedWithMe" class="section">
+      <div class="section-header">
+        <h2>Fichiers partagés avec moi</h2>
+      </div>
+      <div id="sharedFilesGrid" class="files-grid">
+        <div class="loading-state">
+          <div class="spinner"></div>
+          <span>Chargement…</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- ========== SECTION: Upload ========== -->
+    <section id="sectionUpload" class="section">
+      <div class="section-header">
+        <h2>Envoyer un fichier chiffré</h2>
+      </div>
+
+      <div class="upload-card">
+        <!-- Drop zone -->
+        <div class="drop-zone" id="dropZone">
+          <div class="drop-icon">
+            <svg viewBox="0 0 64 64" fill="none"><rect x="8" y="8" width="48" height="48" rx="8" fill="#1e293b"/><path d="M32 20v16M24 28l8-8 8 8" stroke="#3b82f6" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/><path d="M20 44h24" stroke="#64748b" stroke-width="2" stroke-linecap="round"/></svg>
+          </div>
+          <p class="drop-title">Glissez votre fichier ici</p>
+          <p class="drop-sub">ou <label class="drop-browse" for="fileInput">parcourez</label></p>
+          <p class="drop-limit">Max 50 Mo — chiffrement local AES-256-GCM</p>
+          <input type="file" id="fileInput" hidden />
+        </div>
+
+        <!-- Selected file info -->
+        <div id="selectedFile" class="selected-file hidden">
+          <div class="selected-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M13 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"/><polyline points="13 2 13 9 20 9"/></svg>
+          </div>
+          <div class="selected-meta">
+            <span id="selectedName" class="selected-name"></span>
+            <span id="selectedSize" class="selected-size"></span>
+          </div>
+          <button class="clear-file" id="clearFileBtn">✕</button>
+        </div>
+
+        <!-- Recipient selection -->
+        <div class="field">
+          <label>Partager avec (optionnel)</label>
+          <div class="recipients-list" id="recipientsList">
+            <div class="loading-state small">
+              <div class="spinner"></div><span>Chargement des utilisateurs…</span>
+            </div>
+          </div>
+        </div>
+
+        <div id="uploadError" class="error-msg hidden"></div>
+        <div id="uploadSuccess" class="success-msg hidden"></div>
+
+        <!-- Progress -->
+        <div id="uploadProgress" class="progress-wrap hidden">
+          <div class="progress-label">
+            <span id="progressText">Chiffrement en cours…</span>
+            <span id="progressPct">0%</span>
+          </div>
+          <div class="progress-bar"><div id="progressFill" style="width:0%"></div></div>
+        </div>
+
+        <button class="btn-primary upload-submit" id="uploadBtn" disabled>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+          Chiffrer et envoyer
+        </button>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ========== SHARE MODAL ========== -->
+  <div id="shareModal" class="modal-overlay hidden">
+    <div class="modal">
+      <h2>Partager le fichier</h2>
+      <p id="shareModalFilename" class="modal-subtitle"></p>
+      <div class="field">
+        <label>Sélectionner un utilisateur</label>
+        <select id="shareUserSelect" class="select"></select>
+      </div>
+      <div class="field">
+        <label>Votre clé privée RSA (pour ré-encapsuler la clé AES)</label>
+        <textarea id="sharePrivateKey" class="textarea" rows="5" placeholder="-----BEGIN RSA PRIVATE KEY-----&#10;...&#10;-----END RSA PRIVATE KEY-----"></textarea>
+      </div>
+      <div id="shareError" class="error-msg hidden"></div>
+      <div class="modal-actions">
+        <button class="btn-secondary" id="cancelShareBtn">Annuler</button>
+        <button class="btn-primary" id="confirmShareBtn">Partager</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========== PRIVATE KEY LOAD MODAL ========== -->
+  <div id="loadKeyModal" class="modal-overlay hidden">
+    <div class="modal">
+      <h2>Charger votre clé privée</h2>
+      <p class="modal-subtitle">La clé reste en mémoire locale (session). Elle n'est jamais envoyée au serveur.</p>
+      <div class="field">
+        <label>Coller votre clé privée RSA</label>
+        <textarea id="pastePrivateKey" class="textarea" rows="8" placeholder="-----BEGIN RSA PRIVATE KEY-----&#10;MIIEowIBAAKCAQEA...&#10;-----END RSA PRIVATE KEY-----"></textarea>
+      </div>
+      <p class="modal-or">— ou —</p>
+      <label class="btn-secondary file-btn">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+        Importer un fichier .pem
+        <input type="file" id="importKeyFile" accept=".pem,.key,.txt" hidden />
+      </label>
+      <div id="loadKeyError" class="error-msg hidden"></div>
+      <div class="modal-actions">
+        <button class="btn-secondary" id="cancelLoadKeyBtn">Annuler</button>
+        <button class="btn-primary" id="confirmLoadKeyBtn">Charger la clé</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast notifications -->
+  <div id="toastContainer" class="toast-container"></div>
+
+  <script src="/secure-share-app/frontend/js/crypto.js"></script>
+  <script src="/secure-share-app/frontend/js/api.js"></script>
+  <script src="/secure-share-app/frontend/js/dashboard.js"></script>
+</body>
+</html>

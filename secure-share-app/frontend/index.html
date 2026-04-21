@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SecureShare — Connexion</title>
+  <link rel="stylesheet" href="/secure-share-app/frontend/css/style.css" />
+</head>
+<body class="auth-page">
+
+  <!-- Animated background particles -->
+  <div class="bg-grid"></div>
+
+  <div class="auth-container">
+    <!-- Logo -->
+    <div class="logo">
+      <div class="logo-icon">
+        <svg viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <rect x="8" y="16" width="24" height="18" rx="3" fill="#3b82f6" opacity="0.9"/>
+          <path d="M13 16V12a7 7 0 0 1 14 0v4" stroke="#60a5fa" stroke-width="2.5" stroke-linecap="round"/>
+          <circle cx="20" cy="25" r="3" fill="white"/>
+          <line x1="20" y1="28" x2="20" y2="31" stroke="white" stroke-width="2" stroke-linecap="round"/>
+        </svg>
+      </div>
+      <span class="logo-text">SecureShare</span>
+    </div>
+
+    <p class="logo-subtitle">Partage de fichiers chiffré de bout en bout</p>
+
+    <!-- Tabs -->
+    <div class="tab-bar">
+      <button class="tab active" data-tab="login">Connexion</button>
+      <button class="tab" data-tab="register">Créer un compte</button>
+    </div>
+
+    <!-- Login Form -->
+    <form id="loginForm" class="auth-form active" autocomplete="off">
+      <div class="field">
+        <label>Nom d'utilisateur</label>
+        <input type="text" id="loginUsername" placeholder="Votre identifiant" required />
+      </div>
+      <div class="field">
+        <label>Mot de passe</label>
+        <div class="password-wrap">
+          <input type="password" id="loginPassword" placeholder="••••••••" required />
+          <button type="button" class="eye-btn" data-target="loginPassword">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+          </button>
+        </div>
+      </div>
+      <div id="loginError" class="error-msg hidden"></div>
+      <button type="submit" class="btn-primary" id="loginBtn">
+        <span class="btn-text">Se connecter</span>
+        <span class="btn-loader hidden"></span>
+      </button>
+    </form>
+
+    <!-- Register Form -->
+    <form id="registerForm" class="auth-form" autocomplete="off">
+      <div class="field">
+        <label>Nom d'utilisateur</label>
+        <input type="text" id="regUsername" placeholder="Choisissez un identifiant" required minlength="3" />
+      </div>
+      <div class="field">
+        <label>Mot de passe</label>
+        <div class="password-wrap">
+          <input type="password" id="regPassword" placeholder="8 caractères minimum" required minlength="8" />
+          <button type="button" class="eye-btn" data-target="regPassword">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+          </button>
+        </div>
+        <div class="strength-bar"><div id="strengthFill"></div></div>
+        <span id="strengthText" class="strength-text"></span>
+      </div>
+      <div class="field">
+        <label>Confirmer le mot de passe</label>
+        <input type="password" id="regConfirm" placeholder="••••••••" required />
+      </div>
+      <div id="registerError" class="error-msg hidden"></div>
+      <button type="submit" class="btn-primary" id="registerBtn">
+        <span class="btn-text">Créer mon compte</span>
+        <span class="btn-loader hidden"></span>
+      </button>
+    </form>
+
+    <!-- Security notice -->
+    <div class="security-note">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+      <span>Chiffrement RSA-2048 + AES-256-GCM — votre clé privée ne quitte jamais votre appareil</span>
+    </div>
+  </div>
+
+  <!-- Private Key Modal (shown after register) -->
+  <div id="keyModal" class="modal-overlay hidden">
+    <div class="modal">
+      <div class="modal-icon success">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+      </div>
+      <h2>Compte créé !</h2>
+      <p class="modal-subtitle">
+        <strong>⚠️ Important :</strong> Sauvegardez votre clé privée RSA ci-dessous.
+        Elle est nécessaire pour déchiffrer vos fichiers. Le serveur ne la stocke jamais.
+      </p>
+      <div class="key-box">
+        <pre id="privateKeyDisplay"></pre>
+        <button class="copy-btn" id="copyKeyBtn">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+          Copier
+        </button>
+      </div>
+      <button class="btn-primary" id="downloadKeyBtn">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+        Télécharger la clé privée (.pem)
+      </button>
+      <button class="btn-secondary" id="modalContinueBtn">J'ai sauvegardé ma clé → Continuer</button>
+    </div>
+  </div>
+
+  <script src="/secure-share-app/frontend/js/api.js"></script>
+  <script src="/secure-share-app/frontend/js/auth.js"></script>
+</body>
+</html>
