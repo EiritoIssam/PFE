@@ -130,3 +130,4 @@ export SECRET_KEY="votre-cle-secrete-tres-longue-et-aleatoire"
 - [ ] Rate limiting (flask-limiter)
 - [ ] 2FA (TOTP)
 - [ ] Migration vers PostgreSQL
+kjnjefdklk,lklmmlrvf
