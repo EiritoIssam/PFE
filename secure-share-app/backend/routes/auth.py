@@ -17,7 +17,7 @@ auth_bp = Blueprint("auth", __name__)
 
 def make_token(user_id: int, username: str) -> str:
     payload = {
-        "sub": user_id,
+        "sub": str(user_id),
         "username": username,
         "exp": datetime.datetime.utcnow() + datetime.timedelta(hours=8),
         "iat": datetime.datetime.utcnow(),
@@ -28,9 +28,7 @@ def make_token(user_id: int, username: str) -> str:
 def decode_token(token: str) -> dict | None:
     try:
         return jwt.decode(token, current_app.config["SECRET_KEY"], algorithms=["HS256"])
-    except jwt.ExpiredSignatureError:
-        return None
-    except jwt.InvalidTokenError:
+    except Exception:
         return None
 
 
@@ -47,7 +45,7 @@ def require_auth(f):
         payload = decode_token(token)
         if not payload:
             return jsonify({"error": "Token expired or invalid"}), 401
-        kwargs["current_user_id"] = payload["sub"]
+        kwargs["current_user_id"] = int(payload["sub"])
         kwargs["current_username"] = payload["username"]
         return f(*args, **kwargs)
 

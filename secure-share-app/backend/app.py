@@ -26,7 +26,7 @@ def create_app() -> Flask:
     CORS(app)
 
     # ------------------------------------------------------------------ config
-    app.config["SECRET_KEY"] = os.environ.get("SECRET_KEY", "dev-secret-change-in-prod-!!!")
+    app.config["SECRET_KEY"] = os.environ.get("SECRET_KEY", "dev-secret-change-in-prod-!!-key")
     app.config["MAX_CONTENT_LENGTH"] = 52 * 1024 * 1024  # 52 MB
 
     # ------------------------------------------------------------------ CORS (manual, no flask-cors needed)

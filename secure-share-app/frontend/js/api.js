@@ -35,6 +35,11 @@ const API = (() => {
     const res = await fetch(`${BASE}${path}`, opts);
     const data = await res.json().catch(() => ({}));
 
+    if (res.status === 401) {
+      clearSession();
+      window.location.href = '/';
+      return;
+    }
     if (!res.ok) throw { status: res.status, message: data.error || 'Erreur serveur' };
     return data;
   }
